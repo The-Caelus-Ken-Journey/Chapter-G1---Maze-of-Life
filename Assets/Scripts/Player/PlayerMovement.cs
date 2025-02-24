@@ -5,8 +5,6 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
-    [SerializeField] private LayerMask groundLayer;
-
     private Rigidbody playerRigidbody;
     private float horizontalInput;
 

@@ -890,9 +890,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
 --- !u!114 &1560742714
 MonoBehaviour:
   m_ObjectHideFlags: 0
