@@ -1,0 +1,62 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerMovement : MonoBehaviour
+{
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float groundCheckDistance = 0.2f;
+    [SerializeField] private LayerMask groundLayer;
+
+    private Rigidbody playerRigidbody;
+    private float horizontalInput;
+    private Keyboard keyboard;
+
+    private bool isGrounded
+    {
+        get
+        {
+            return Physics.Raycast(transform.position + Vector3.down * 0.5f, Vector3.down, groundCheckDistance, groundLayer);
+        }
+    }
+
+    void Start()
+    {
+        playerRigidbody = GetComponent<Rigidbody>();
+        keyboard = Keyboard.current;
+    }
+
+    void Update()
+    {
+        horizontalInput = Input.GetAxis("Horizontal");
+
+        // Jump input check
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            HandleJumping();
+        }
+    }
+
+    void FixedUpdate()
+    {
+        HandleMovement();
+    }
+
+    private void HandleMovement()
+    {
+        Vector3 movement = new Vector3(horizontalInput * speed, playerRigidbody.linearVelocity.y, 0);
+        playerRigidbody.linearVelocity = movement;
+    }
+
+    private void HandleJumping()
+    {
+        playerRigidbody.linearVelocity = new Vector3(playerRigidbody.linearVelocity.x, 0, playerRigidbody.linearVelocity.z); // Reset Y velocity before jumping
+        playerRigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position + Vector3.down * 0.1f, transform.position + Vector3.down * (0.1f + groundCheckDistance));
+    }
+}
