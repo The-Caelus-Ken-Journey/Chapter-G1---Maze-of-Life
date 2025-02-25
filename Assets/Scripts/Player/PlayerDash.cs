@@ -17,6 +17,9 @@ public class PlayerDash : MonoBehaviour
     [SerializeField] private float meterRegenRate = 10f;
     [SerializeField] private float meterMax = 100f;
 
+    [Header("Game Mode")]
+    [SerializeField] private bool isHardMode = false;
+
     private int maxAirDashes = 1;
     private bool isDashing = false;
     private bool canDash = true;
@@ -33,18 +36,32 @@ public class PlayerDash : MonoBehaviour
     }
 
     [Header("UI (Optional)")]
-    [SerializeField] private Slider dashMeterUI; // Attach a UI Slider in Inspector
+    [SerializeField] private Slider dashMeterUI;
+    [SerializeField] private Toggle hardModeToggle;
 
     void Awake()
     {
         playerRigidbody = GetComponent<Rigidbody>();
     }
 
+    void Start()
+    {
+        if (hardModeToggle != null)
+        {
+            hardModeToggle.onValueChanged.AddListener(delegate { ToggleHardMode(); });
+        }
+    }
+
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            isHardMode = !isHardMode;
+            Debug.Log($"Hard Mode: {(isHardMode ? "ON" : "OFF")}");
+        }
         CheckGrounded();
-        RegenerateDashMeter();
-        UpdateDashMeterUI(); // Updates UI if assigned
+        if (!isHardMode) RegenerateDashMeter();
+        UpdateDashMeterUI();
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash && dashMeter > 0)
         {
@@ -60,8 +77,16 @@ public class PlayerDash : MonoBehaviour
         }
     }
 
+    void ToggleHardMode()
+    {
+        isHardMode = hardModeToggle.isOn;
+        Debug.Log($"Hard Mode: {(isHardMode ? "ON" : "OFF")}");
+    }
+
     void RegenerateDashMeter()
     {
+        if (isHardMode) return;
+
         if (dashMeter < meterMax)
         {
             dashMeter += meterRegenRate * Time.deltaTime;
