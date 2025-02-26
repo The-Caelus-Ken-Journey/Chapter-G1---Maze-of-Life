@@ -57,7 +57,6 @@ public class PlayerDash : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.H))
         {
             isHardMode = !isHardMode;
-            Debug.Log($"Hard Mode: {(isHardMode ? "ON" : "OFF")}");
         }
         CheckGrounded();
         if (!isHardMode) RegenerateDashMeter();
@@ -91,7 +90,6 @@ public class PlayerDash : MonoBehaviour
         {
             dashMeter += meterRegenRate * Time.deltaTime;
             dashMeter = Mathf.Clamp(dashMeter, 0, meterMax);
-            Debug.Log($"Regenerating... Current Meter: {dashMeter:F2}");
         }
 
     }
@@ -116,13 +114,12 @@ public class PlayerDash : MonoBehaviour
         // Ensure enough meter before dashing
         if (dashMeter < dashCost)
         {
-            Debug.Log("Not enough Dash Meter!");
+            Debug.LogWarning("Not enough Dash Meter!");
             yield break;
         }
 
         // Subtract dash cost
         dashMeter -= dashCost;
-        Debug.Log($"Dash used! Current meter: {dashMeter:F2}");
 
         canDash = false;
         isDashing = true;
