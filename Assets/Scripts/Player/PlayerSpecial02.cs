@@ -73,13 +73,13 @@ public class PlayerSpecial02 : MonoBehaviour
 
             if (canDoubleJump && jumpCount < 1)
             {
-                requiredAgility = Random.Range(25f, 35f);
+                requiredAgility = Random.Range(10f, 15f);
                 if (isHardMode) requiredAgility *= 1.15f;
                 jumpType = "Double Jump";
             }
             else if (canTripleJump && jumpCount < 2)
             {
-                requiredAgility = Random.Range(75f, 90f);
+                requiredAgility = Random.Range(25f, 30f);
                 if (isHardMode) requiredAgility *= 1.20f;
                 jumpType = "Triple Jump";
             }

@@ -79,9 +79,13 @@ public class PlayerSpecial01 : MonoBehaviour
             {
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, wallClimbSpeed, rb.linearVelocity.z);
                 climbTimer -= Time.deltaTime;
-                currentStamina -= staminaDrainNormal * Time.deltaTime * staminaDrainRate;
+
+                float staminaDrain = staminaDrainNormal * Time.deltaTime * staminaDrainRate;
+                currentStamina = Mathf.Max(currentStamina - staminaDrain, 0);  // Prevents negative stamina
+
                 isWallClimbing = true;
                 debugText.text = "Climbing";
+                UpdateStaminaBar();
             }
         }
         else if (Input.GetKey(KeyCode.LeftControl) && isTouchingWall)
@@ -96,9 +100,15 @@ public class PlayerSpecial01 : MonoBehaviour
         {
             float climbBoost = Mathf.Lerp(0, chargedClimbBoost, chargeTimer / maxChargeTime);
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, wallClimbSpeed + climbBoost, rb.linearVelocity.z);
-            currentStamina -= staminaDrainCharged;
+
+            float staminaDrain = Mathf.Min(staminaDrainCharged, currentStamina);  // Ensure we don't subtract more than available
+            currentStamina -= staminaDrain;
+
             isChargingClimb = false;
             chargeTimer = 0;
+
+            debugText.text = "Boosted Climb";
+            UpdateStaminaBar();
         }
     }
 
@@ -134,13 +144,18 @@ public class PlayerSpecial01 : MonoBehaviour
         canWallJump = true;
     }
 
+    private void UpdateStaminaBar()
+    {
+        staminaSlider.value = currentStamina / maxStamina;
+    }
+
     private void RegenerateStamina()
     {
-        if (currentStamina < maxStamina)
+        if (!isWallClimbing && !isChargingClimb && currentStamina < maxStamina)
         {
             currentStamina += staminaRegenRate * Time.deltaTime;
             currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
-            staminaSlider.value = currentStamina;
+            UpdateStaminaBar();
         }
     }
 
