@@ -124,14 +124,21 @@ public class PlayerDash : MonoBehaviour
         canDash = false;
         isDashing = true;
         playerRigidbody.useGravity = false;
-        dashDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
 
-        if (dashDirection == Vector3.zero)
+        // Get dash direction
+        Vector3 inputDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+
+        if (inputDirection != Vector3.zero)
         {
-            dashDirection = transform.forward;
+            dashDirection = inputDirection;
+        }
+        else
+        {
+            dashDirection = transform.forward; // Default direction
         }
 
         float dashEndTime = Time.time + dashDuration;
+
         while (Time.time < dashEndTime)
         {
             playerRigidbody.linearVelocity = dashDirection * dashSpeed;
@@ -140,7 +147,7 @@ public class PlayerDash : MonoBehaviour
 
         playerRigidbody.useGravity = true;
         isDashing = false;
-        playerRigidbody.linearVelocity = Vector3.zero;
+        playerRigidbody.linearVelocity = Vector3.zero; // Stop movement after dashing
 
         if (!isGrounded)
         {
@@ -149,5 +156,6 @@ public class PlayerDash : MonoBehaviour
 
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
+
     }
 }
